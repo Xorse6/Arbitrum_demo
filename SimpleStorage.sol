@@ -6,6 +6,7 @@ contract SimpleStorage {
 
     uint256[] public favoriteNumbers; // Dynamic array to store multiple favorite numbers
 
+
     // Struct to store a person’s name and their favorite number
     struct Person {
         string name; // Person's name
@@ -22,9 +23,33 @@ contract SimpleStorage {
 
     ContractState public state; // State variable to store the current contract state
 
+    event NumberUpdated(uint256 newNumber, address updatedBy);
+
     function storeNumber(uint256 _favoriteNumber) public {
         favoriteNumber = _favoriteNumber;
+        emit NumberUpdated(_favoriteNumber, msg.sender);
     }
+
+
+    // Function to store a number in the storage variable
+    function store(uint256 _favoriteNumber) public {
+        favoriteNumber = _favoriteNumber;
+    }
+
+    // Function that uses a memory variable
+    function updateNumber(uint256 _newNumber) public pure  returns (uint256) {
+        // Memory variable is used for temporary calculations
+        uint256 tempNumber = _newNumber + 5;
+        return tempNumber;
+    }
+
+    // Function that uses a calldata variable
+    function concatenateString(string calldata _inputString) public pure returns (string memory) {
+        // Memory variable to store the concatenated result
+        string memory newString = string(abi.encodePacked(_inputString, " is awesome!"));
+        return newString;
+    }
+
 
     function isGreaterThan(uint256 _compareValue) public view returns (bool) {
         if (favoriteNumber > _compareValue) {
@@ -68,7 +93,7 @@ contract SimpleStorage {
     }
 
     function addPerson(string memory _name, uint256 _favoriteNumber) public {
-        people.push(Person(_name, _favoriteNumber));
+        nameToFavoriteNumber[_name] = _favoriteNumber;
     }
 
     function activateContract() public {
@@ -82,6 +107,10 @@ contract SimpleStorage {
     function isActive() public view returns (bool) {
         return state == ContractState.Active;
     }
+
+    mapping(string => uint256) public nameToFavoriteNumber;
+
+    
 
     // function store(uint256 _favoriteNumber) public {
     //     favoriteNumber = _favoriteNumber;
